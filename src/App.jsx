@@ -17,42 +17,80 @@ export default function App() {
   //filter ile sonnetsData dizisinde dolaşarak her bir sonetin satırlarını kontrol edelim
   //ve arama metnini içeren sonetleri searchResults adlı bir state içine yerleştirdi
   useEffect(() => {
-    //// useEffect içinde, searchInput değeri değiştiğinde çalışacak kodları tanımlayalim
+    // useEffect içinde, searchInput değeri değiştiğinde çalışacak kodları tanımlayalım
 
+    // 1. sonnetsData dizisini filtreleme
     const results = sonnetsData.filter((sonnet) =>
-      sonnet.lines.some(
-        (line) =>
-          line
-            .toLowerCase() // satırı küçük harfe çevir
-            .includes(searchInput.toLowerCase()) // arama terimini küçük harfe çevir ve içerip içermediğini kontrol et
+      // 2. Her bir sonnet'in lines dizisinde dolaşma
+      sonnet.lines.some((line) =>
+        // 3. Satırdaki her kelimeyi ayırarak küçük harfe çevirme
+        line
+          .toLowerCase()
+          .split(' ')
+          .some(
+            (word) => word.toLowerCase() === searchInput.toLowerCase() // Tam kelime eşleşmesi kontrolü
+          )
       )
     )
+
+    // 5. Elde edilen sonuçları setSearchResults fonksiyonu ile searchResults state'ine set etme
     setSearchResults(results)
   }, [searchInput])
 
   const sonnetsContent =
-    searchResults.length > 0 ? (
-      searchResults.map((sonnet, index) => (
-        <div key={index} className="sonnet">
-          <h3>Sonnet {sonnet.number}</h3>
-          {sonnet.lines.map((line, lineIndex) => (
-            // 2.1. Arama sonuçları varsa, sadece arama terimini içeren kelimeleri vurgula
-            <p key={lineIndex}>
-              {line.split(' ').map((word, wordIndex) =>
-                word.toLowerCase().includes(searchInput.toLowerCase()) ? (
-                  <span key={wordIndex} className="highlighted-word">
-                    {word}{' '}
-                  </span>
-                ) : (
-                  <span key={wordIndex}>{word} </span>
-                )
-              )}
-            </p>
-          ))}
-        </div>
-      ))
+    searchInput === '' ? ( // Eğer arama yapılmamışsa her sonnet bir div icinde h3 ile sonnet basligi ve her satiri <p> olacak sekilde ayarlayalim
+      sonnetsData.map(
+        (
+          sonnet,
+          index //ile her bir sonnet için bir <div> oluşturalim
+        ) => (
+          <div key={index} className="sonnet">
+            <h3>Sonnet {sonnet.number}</h3>
+            {sonnet.lines.map(
+              (
+                line,
+                lineIndex //ile her bir satır için bir <p> oluşturma
+              ) => (
+                <p key={lineIndex}>{line}</p>
+              )
+            )}
+          </div>
+        )
+      )
+    ) : searchResults.length > 0 ? ( // eger arama sonuclari varsa
+      searchResults.map(
+        (
+          sonnet,
+          index //bulunan sonentlere div olusturalim
+        ) => (
+          // searchResults içindeki her bir sonnet için döngü
+          <div key={index} className="sonnet">
+            {/* Her bir sonnetin başlığını gösterme */}
+            <h3>Sonnet {sonnet.number}</h3>
+            {/* Her bir sonnetin satırları üzerinde döngü */}
+            {sonnet.lines.map((line, lineIndex) => (
+              //  her bir satır için bir <p> oluşturulur.
+              <p key={lineIndex}>
+                {/* Her bir satırdaki kelimeler üzerinde döngü */}
+                {line.split(' ').map((word, wordIndex) =>
+                  word.toLowerCase().includes(searchInput.toLowerCase()) ? (
+                    //ile her kelime için bir <span> oluşturulur. Eğer kelime arama terimini içeriyorsa, bu kelime <span> içinde highlighted-word sınıfıyla vurgulanır.
+                    <span key={wordIndex} className="highlighted-word">
+                      {word}{' '}
+                    </span>
+                  ) : (
+                    // Eğer kelime arama terimini içermiyorsa, normal olarak göster
+
+                    <span key={wordIndex}>{word} </span>
+                  )
+                )}
+              </p>
+            ))}
+          </div>
+        )
+      )
     ) : (
-      // 1. Arama sonuçları yoksa mesajı gösterme
+      // 1.eger Arama sonuçları yoksa mesajı gösterme
 
       <p className="no-results-message">
         Alas, thy search hath yielded no results
