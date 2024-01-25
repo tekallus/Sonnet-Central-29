@@ -41,10 +41,10 @@ export default function App() {
     searchInput === '' ? ( // Eğer arama yapılmamışsa her sonnet bir div icinde h3 ile sonnet basligi ve her satiri <p> olacak sekilde ayarlayalim
       sonnetsData.map(
         (
-          sonnet,
-          index //ile her bir sonnet için bir <div> oluşturalim
+          sonnet
+          //ile her bir sonnet için bir <div> oluşturalim
         ) => (
-          <div key={index} className="sonnet">
+          <div key={sonnet.number} className="sonnet">
             <h3>Sonnet {sonnet.number}</h3>
             {sonnet.lines.map(
               (
@@ -60,11 +60,11 @@ export default function App() {
     ) : searchResults.length > 0 ? ( // eger arama sonuclari varsa
       searchResults.map(
         (
-          sonnet,
-          index //bulunan sonentlere div olusturalim
+          sonnet
+          //bulunan sonentlere div olusturalim
         ) => (
           // searchResults içindeki her bir sonnet için döngü
-          <div key={index} className="sonnet">
+          <div key={sonnet.number} className="sonnet">
             {/* Her bir sonnetin başlığını gösterme */}
             <h3>Sonnet {sonnet.number}</h3>
             {/* Her bir sonnetin satırları üzerinde döngü */}
